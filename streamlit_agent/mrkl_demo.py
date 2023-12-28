@@ -9,7 +9,6 @@ from langchain.callbacks import StreamlitCallbackHandler
 from langchain.chains import LLMMathChain
 from langchain.llms import OpenAI
 from langchain.utilities import DuckDuckGoSearchAPIWrapper
-from langchain_experimental.sql import SQLDatabaseChain
 
 from streamlit_agent.callbacks.capturing_callback_handler import playback_callbacks
 from streamlit_agent.clear_results import with_clear_container
@@ -45,8 +44,6 @@ else:
 llm = OpenAI(temperature=0, openai_api_key=openai_api_key, streaming=True)
 search = DuckDuckGoSearchAPIWrapper()
 llm_math_chain = LLMMathChain.from_llm(llm)
-db = SQLDatabase.from_uri(f"sqlite:///{DB_PATH}")
-db_chain = SQLDatabaseChain.from_llm(llm, db)
 tools = [
     Tool(
         name="Search",
@@ -57,12 +54,7 @@ tools = [
         name="Calculator",
         func=llm_math_chain.run,
         description="useful for when you need to answer questions about math",
-    ),
-    Tool(
-        name="FooBar DB",
-        func=db_chain.run,
-        description="useful for when you need to answer questions about FooBar. Input should be in the form of a question containing full context",
-    ),
+    )
 ]
 
 # Initialize agent
